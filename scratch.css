@@ -1,0 +1,275 @@
+/* ═══════════════════════════════════════════════════
+   scratch.css  —  Verbier Skiing Page  (William Breum-Leer)
+   REQUIREMENT CHECKLIST:
+   ✔ At least 4 style definitions
+   ✔ Styles that specify font color
+   ✔ Styles that specify font family
+   ✔ At least 3 divs for positioning/styling
+═══════════════════════════════════════════════════ */
+
+/* ── 1. Global Reset & Background ── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;   /* font-family requirement */
+  font-size: 17px;
+  line-height: 1.8;
+  color: #1a1a2e;                                     /* font-color requirement */
+  background-color: #0f0f23;                          /* custom background color */
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(30,60,110,.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 10%, rgba(100,160,220,.15) 0%, transparent 50%);
+  min-height: 100vh;
+}
+
+/* ── 2. Header / Hero div ── (div 1) */
+#header-div {
+  background: linear-gradient(180deg, #071a3e 0%, #0d3276 60%, #1a5ca8 100%);
+  text-align: center;
+  padding: 80px 20px 100px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 4px solid #c9a84c;
+}
+
+#header-div::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('https://images.unsplash.com/photo-1548778052-311f4bc2b502?w=1400&q=70') center/cover no-repeat;
+  opacity: 0.22;
+  z-index: 0;
+}
+
+#header-div h1 {
+  font-family: 'Georgia', serif;             /* font-family requirement */
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  color: #ffffff;                            /* font-color requirement */
+  letter-spacing: 0.05em;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 4px 20px rgba(0,0,0,.6);
+}
+
+#header-div .tagline {
+  font-family: 'Trebuchet MS', sans-serif;  /* font-family requirement */
+  color: #c9a84c;                           /* font-color requirement */
+  font-size: 1.2rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+  margin-top: 12px;
+}
+
+/* ── 3. Navigation Bar ── */
+#nav-bar {
+  background: #071a3e;
+  border-bottom: 2px solid #c9a84c;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  text-align: center;
+  padding: 12px 0;
+}
+
+#nav-bar a {
+  font-family: 'Trebuchet MS', sans-serif;  /* font-family requirement */
+  color: #c9a84c;                           /* font-color requirement */
+  text-decoration: none;
+  margin: 0 20px;
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+#nav-bar a:hover {
+  color: #ffffff;
+}
+
+/* ── 4. Main Content div ── (div 2) */
+#content-div {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 0 24px;
+}
+
+/* ── 5. Card sections ── */
+.card-section {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 12px;
+  padding: 40px;
+  margin-bottom: 50px;
+  backdrop-filter: blur(4px);
+}
+
+.card-section h2 {
+  font-family: 'Georgia', serif;            /* font-family requirement */
+  color: #c9a84c;                           /* font-color requirement */
+  font-size: 1.9rem;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(201,168,76,0.35);
+}
+
+.card-section p {
+  color: #d0d8e8;                           /* font-color requirement */
+  margin-bottom: 16px;
+}
+
+/* ── 6. Lists ── */
+.card-section ol {
+  color: #d0d8e8;
+  padding-left: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.card-section ul {
+  color: #aac4e0;
+  padding-left: 1.5rem;
+  margin-top: 6px;
+}
+
+.card-section li {
+  margin-bottom: 6px;
+}
+
+/* ── 7. Images ── */
+.verbier-img {
+  width: 100%;
+  border-radius: 10px;
+  border: 2px solid rgba(201,168,76,0.4);
+  margin: 20px 0;
+  object-fit: cover;
+  max-height: 420px;
+  display: block;
+}
+
+/* ── 8. Video & Tableau wrapper div ── (div 3) */
+#media-div {
+  background: rgba(7,26,62,0.7);
+  border-radius: 12px;
+  padding: 36px;
+  margin-bottom: 50px;
+  border: 1px solid rgba(201,168,76,0.25);
+}
+
+#media-div h2 {
+  font-family: 'Georgia', serif;
+  color: #c9a84c;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid rgba(201,168,76,0.3);
+  margin-bottom: 30px;
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── 9. Tableau wrapper ── */
+.tableau-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid rgba(201,168,76,0.3);
+  min-height: 400px;
+}
+
+/* ── 10. Anchor section heading ── */
+.anchor-target {
+  scroll-margin-top: 70px;
+}
+
+/* ── 11. Info boxes (runs, facts) ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.info-box {
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+.info-box .big {
+  font-family: 'Georgia', serif;
+  font-size: 2rem;
+  color: #c9a84c;
+  line-height: 1;
+  display: block;
+}
+
+.info-box .small {
+  color: #aac4e0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 6px;
+  display: block;
+}
+
+/* ── 12. App link button ── */
+.btn-snow {
+  display: inline-block;
+  background: #c9a84c;
+  color: #071a3e;
+  font-family: 'Trebuchet MS', sans-serif;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 14px 36px;
+  border-radius: 50px;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  margin: 10px 8px 0;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.btn-snow:hover {
+  background: #e2be72;
+  transform: translateY(-2px);
+}
+
+.btn-outline-snow {
+  background: transparent;
+  color: #c9a84c;
+  border: 2px solid #c9a84c;
+}
+
+.btn-outline-snow:hover {
+  background: rgba(201,168,76,0.15);
+  color: #e2be72;
+  border-color: #e2be72;
+}
+
+/* ── 13. Footer ── */
+footer {
+  background: #050f1e;
+  color: #445;
+  text-align: center;
+  padding: 24px;
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: 0.85rem;
+  border-top: 2px solid rgba(201,168,76,0.2);
+}

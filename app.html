@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verbier Ski Level Finder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+
+    :root {
+      --bg:       #08101f;
+      --panel:    rgba(255,255,255,0.04);
+      --border:   rgba(201,168,76,0.25);
+      --gold:     #c9a84c;
+      --gold2:    #e2be72;
+      --text:     #d4dff0;
+      --muted:    #7a8fa8;
+      --green:    #2ecc71;
+      --blue:     #3498db;
+      --red:      #e74c3c;
+      --black:    #1a1a1a;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── animated background ── */
+    body::before {
+      content:'';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 15% 40%, rgba(30,70,140,.35) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 20%, rgba(100,60,180,.18) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 90%, rgba(20,100,80,.15) 0%, transparent 50%);
+      z-index: -1;
+    }
+
+    /* ── header ── */
+    header {
+      text-align: center;
+      padding: 56px 20px 40px;
+    }
+    header .label {
+      font-size: .78rem;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      color: #fff;
+      margin-bottom: 14px;
+      text-shadow: 0 2px 20px rgba(0,0,0,.5);
+    }
+    header p {
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 10px;
+      font-weight: 300;
+      font-size: 1.05rem;
+    }
+
+    /* ── app container ── */
+    #app {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* ── progress bar ── */
+    #progress-wrap {
+      margin-bottom: 32px;
+    }
+    #progress-label {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    #progress-bar-bg {
+      background: rgba(255,255,255,.08);
+      border-radius: 50px;
+      height: 6px;
+    }
+    #progress-bar-fill {
+      background: linear-gradient(90deg, var(--gold), var(--gold2));
+      height: 6px;
+      border-radius: 50px;
+      transition: width .5s ease;
+      width: 0%;
+    }
+
+    /* ── question card ── */
+    .q-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(8px);
+      animation: fadeSlide .4s ease both;
+    }
+    @keyframes fadeSlide {
+      from { opacity:0; transform:translateY(18px); }
+      to   { opacity:1; transform:none; }
+    }
+    .q-card .q-num {
+      font-size: .75rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .q-card h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.4;
+      margin-bottom: 26px;
+    }
+
+    /* ── answer options ── */
+    .options { display: flex; flex-direction: column; gap: 12px; }
+    .opt-btn {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .97rem;
+      padding: 14px 20px;
+      text-align: left;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .opt-btn:hover {
+      border-color: var(--gold);
+      background: rgba(201,168,76,.1);
+      color: #fff;
+      transform: translateX(4px);
+    }
+    .opt-btn.selected {
+      border-color: var(--gold);
+      background: rgba(201,168,76,.15);
+      color: var(--gold2);
+    }
+
+    /* ── nav buttons ── */
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .btn {
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: .9rem;
+      padding: 12px 28px;
+      transition: all .2s;
+    }
+    .btn-primary { background: var(--gold); color: #071a3e; }
+    .btn-primary:hover { background: var(--gold2); }
+    .btn-secondary { background: rgba(255,255,255,.07); color: var(--muted); }
+    .btn-secondary:hover { background: rgba(255,255,255,.12); color: var(--text); }
+    .btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ── result card ── */
+    #result-card {
+      display: none;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 36px;
+      text-align: center;
+      animation: fadeSlide .5s ease both;
+    }
+    .level-badge {
+      display: inline-block;
+      font-size: 3.8rem;
+      margin-bottom: 16px;
+    }
+    #result-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 2.2rem;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    #result-level-name {
+      font-size: 1rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+    #result-desc {
+      color: var(--text);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 30px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── recommended runs ── */
+    .runs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+    .run-card {
+      border-radius: 10px;
+      padding: 16px;
+      font-size: .9rem;
+      font-weight: 500;
+    }
+    .run-green  { background: rgba(46,204,113,.12); border: 1px solid rgba(46,204,113,.3); color: #2ecc71; }
+    .run-blue   { background: rgba(52,152,219,.12); border: 1px solid rgba(52,152,219,.3); color: #74b9ff; }
+    .run-red    { background: rgba(231,76,60,.12);  border: 1px solid rgba(231,76,60,.3);  color: #e87c70; }
+    .run-black  { background: rgba(180,180,180,.07);border: 1px solid rgba(200,200,200,.2);color: #ccc; }
+    .run-card .run-name { font-weight: 700; display: block; margin-bottom: 4px; }
+    .run-card .run-info { font-size: .8rem; opacity: .8; }
+
+    .btn-restart {
+      background: var(--gold);
+      color: #071a3e;
+      font-weight: 700;
+      border: none;
+      border-radius: 50px;
+      padding: 13px 32px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .95rem;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: background .2s;
+    }
+    .btn-restart:hover { background: var(--gold2); }
+    .btn-back-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .9rem;
+      display: inline-block;
+      margin-top: 20px;
+    }
+    .btn-back-link:hover { color: var(--gold); }
+
+    /* ── score meter ── */
+    .score-ring {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: conic-gradient(var(--gold) 0%, var(--gold) var(--pct), rgba(255,255,255,.08) var(--pct), rgba(255,255,255,.08) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      position: relative;
+    }
+    .score-ring::before {
+      content:'';
+      width:80px; height:80px;
+      border-radius:50%;
+      background: var(--bg);
+      position:absolute;
+    }
+    .score-ring .score-num {
+      position:relative; z-index:1;
+      font-family:'Playfair Display',serif;
+      font-size:1.6rem;
+      color:var(--gold);
+    }
+
+    /* ── back nav ── */
+    .top-nav {
+      max-width:700px;
+      margin:0 auto;
+      padding: 20px 20px 0;
+    }
+    .top-nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .85rem;
+      letter-spacing: .05em;
+    }
+    .top-nav a:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+
+<div class="top-nav">
+  <a href="scratch.html">&#8592; Back to Verbier Page</a>
+</div>
+
+<header>
+  <p class="label">&#9968; William Breum-Leer · Ski Instructor</p>
+  <h1>Find Your Verbier Level</h1>
+  <p>Answer 7 quick questions and discover which runs at Verbier suit you best.</p>
+</header>
+
+<div id="app">
+
+  <!-- Progress -->
+  <div id="progress-wrap">
+    <div id="progress-label">
+      <span id="prog-text">Question 1 of 7</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div id="progress-bar-bg">
+      <div id="progress-bar-fill"></div>
+    </div>
+  </div>
+
+  <!-- Question card -->
+  <div class="q-card" id="q-card">
+    <div class="q-num" id="q-num">Question 1</div>
+    <h2 id="q-text">Loading…</h2>
+    <div class="options" id="options"></div>
+    <div class="nav-row" style="margin-top:24px;">
+      <button class="btn btn-secondary" id="btn-back" onclick="prevQ()">&#8592; Back</button>
+      <button class="btn btn-primary" id="btn-next" onclick="nextQ()">Next &#8594;</button>
+    </div>
+  </div>
+
+  <!-- Result card -->
+  <div id="result-card">
+    <div class="level-badge" id="result-emoji">🎿</div>
+    <div class="score-ring" id="score-ring" style="--pct:0%">
+      <span class="score-num" id="score-disp">0</span>
+    </div>
+    <h2 id="result-title">Your Level</h2>
+    <div id="result-level-name">Level</div>
+    <p id="result-desc">Description</p>
+    <p style="color:var(--gold); font-weight:700; margin-bottom:12px; font-size:.85rem; letter-spacing:.15em; text-transform:uppercase;">Recommended Runs at Verbier</p>
+    <div class="runs-grid" id="runs-grid"></div>
+    <button class="btn-restart" onclick="restart()">&#8635; Try Again</button>
+    <br/>
+    <a href="scratch.html" class="btn-back-link">&#8592; Back to Verbier Page</a>
+  </div>
+
+</div><!-- #app -->
+
+<script>
+  // ── Questions ──────────────────────────────────────────
+  const questions = [
+    {
+      text: "How long have you been skiing?",
+      options: [
+        { label: "Never skied before",          points: 0 },
+        { label: "1–3 seasons",                 points: 1 },
+        { label: "4–8 seasons",                 points: 2 },
+        { label: "9+ seasons",                  points: 3 },
+      ]
+    },
+    {
+      text: "How would you describe your usual skiing speed?",
+      options: [
+        { label: "Slow and cautious — snowplough turns",  points: 0 },
+        { label: "Moderate — linked parallel turns",      points: 1 },
+        { label: "Fast — carving most runs comfortably",  points: 2 },
+        { label: "Very fast — pushing limits regularly",  points: 3 },
+      ]
+    },
+    {
+      text: "How do you handle a steep red run?",
+      options: [
+        { label: "I'd avoid it entirely",             points: 0 },
+        { label: "I'd ski it slowly and carefully",   points: 1 },
+        { label: "I'd ski it confidently",            points: 2 },
+        { label: "Too easy — I want blacks or off-piste", points: 3 },
+      ]
+    },
+    {
+      text: "Have you ever skied off-piste (unmarked terrain)?",
+      options: [
+        { label: "No, I stick to groomed runs",         points: 0 },
+        { label: "A little, on easy mellow slopes",     points: 1 },
+        { label: "Yes, I do it regularly",              points: 2 },
+        { label: "Yes, including steep or technical terrain", points: 3 },
+      ]
+    },
+    {
+      text: "How are you in moguls (bumps)?",
+      options: [
+        { label: "I avoid them completely",         points: 0 },
+        { label: "I work my way through slowly",   points: 1 },
+        { label: "I can handle them reasonably",   points: 2 },
+        { label: "I love moguls and seek them out", points: 3 },
+      ]
+    },
+    {
+      text: "How confident are you at altitude (above 3,000m)?",
+      options: [
+        { label: "I haven't been — I'd be nervous",     points: 0 },
+        { label: "Slightly nervous but could manage",   points: 1 },
+        { label: "Comfortable — altitude doesn't bother me", points: 2 },
+        { label: "Very comfortable — I love high terrain",  points: 3 },
+      ]
+    },
+    {
+      text: "What kind of skiing day sounds most appealing to you?",
+      options: [
+        { label: "Learning on gentle slopes with an instructor", points: 0 },
+        { label: "Long blue cruisers with friends",              points: 1 },
+        { label: "Varied reds and occasional blacks",            points: 2 },
+        { label: "Fresh powder off-piste from first lift",       points: 3 },
+      ]
+    },
+  ];
+
+  // ── Level definitions ─────────────────────────────────
+  const levels = [
+    {
+      min: 0, max: 5,
+      emoji: "🟢",
+      title: "First-Timer",
+      name: "Beginner",
+      desc: "Every great skier started exactly where you are! Verbier has gentle nursery slopes at La Chaux perfect for your first turns. Book a lesson with a qualified instructor (like your host William!) and you'll be sliding confidently down greens by the end of day one.",
+      runs: [
+        { name: "La Chaux", info: "Gentle nursery area · Village access", cls:"run-green" },
+        { name: "Savoleyres Greens", info: "Quiet family sector · Wide runs", cls:"run-green" },
+        { name: "Les Esserts", info: "Beginner magic carpet area", cls:"run-green" },
+      ]
+    },
+    {
+      min: 6, max: 11,
+      emoji: "🔵",
+      title: "Progressing Skier",
+      name: "Intermediate",
+      desc: "You've got the basics nailed and you're ready to explore! Verbier's blue runs offer long, flowing descents with stunning views. Focus on smoothing out your parallel technique and you'll be edging onto reds before the week is out.",
+      runs: [
+        { name: "Savoleyres Blues", info: "Long winding blues · Quiet lift queues", cls:"run-blue" },
+        { name: "Lac des Vaux", info: "Scenic plateau · Link to 4 Vallées", cls:"run-blue" },
+        { name: "La Chaux–Verbier", info: "Classic village run to end the day", cls:"run-blue" },
+      ]
+    },
+    {
+      min: 12, max: 16,
+      emoji: "🔴",
+      title: "Confident Skier",
+      name: "Advanced Intermediate",
+      desc: "You're skiing with style and real confidence. Verbier's reds and milder blacks are your playground. Explore the full 4 Vallées circuit, try Lac des Vaux at speed, and maybe dip a ski into some easy off-piste with a guide. The mountain is opening up for you.",
+      runs: [
+        { name: "Lac des Vaux", info: "Fast wide red · High altitude views", cls:"run-red" },
+        { name: "Mont-Gelé", info: "Challenging red with off-piste access", cls:"run-red" },
+        { name: "Nendaz blacks", info: "Cross into linked valley terrain", cls:"run-black" },
+      ]
+    },
+    {
+      min: 17, max: 21,
+      emoji: "⬛",
+      title: "Expert Skier",
+      name: "Expert",
+      desc: "You are exactly who Verbier was built for. The steep Mont-Fort couloirs, the legendary off-piste of Stairway to Heaven, and the Bec des Rosses await you. Hire a mountain guide for the best lines in fresh powder — and enjoy being at the top of the world.",
+      runs: [
+        { name: "Mont-Fort Couloirs", info: "Steep blacks from 3,330m summit", cls:"run-black" },
+        { name: "Stairway to Heaven", info: "Epic off-piste descent · Guide required", cls:"run-black" },
+        { name: "Bec des Rosses", info: "Xtreme Verbier site · Experts only", cls:"run-black" },
+      ]
+    },
+  ];
+
+  // ── State ─────────────────────────────────────────────
+  let current = 0;
+  let answers = new Array(questions.length).fill(null);
+
+  // ── Render question ───────────────────────────────────
+  function render() {
+    const q = questions[current];
+    document.getElementById('q-num').textContent = `Question ${current + 1} of ${questions.length}`;
+    document.getElementById('q-text').textContent = q.text;
+
+    const opts = document.getElementById('options');
+    opts.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn' + (answers[current] === i ? ' selected' : '');
+      btn.textContent = opt.label;
+      btn.onclick = () => selectAnswer(i);
+      opts.appendChild(btn);
+    });
+
+    document.getElementById('btn-back').disabled = current === 0;
+    document.getElementById('btn-next').textContent = current === questions.length - 1 ? 'See Results ✓' : 'Next →';
+
+    const pct = Math.round((current / questions.length) * 100);
+    document.getElementById('progress-bar-fill').style.width = pct + '%';
+    document.getElementById('prog-text').textContent = `Question ${current+1} of ${questions.length}`;
+    document.getElementById('prog-pct').textContent = pct + '%';
+
+    // re-animate card
+    const card = document.getElementById('q-card');
+    card.style.animation = 'none';
+    card.offsetHeight; // reflow
+    card.style.animation = '';
+  }
+
+  function selectAnswer(i) {
+    answers[current] = i;
+    document.querySelectorAll('.opt-btn').forEach((b,idx) => {
+      b.classList.toggle('selected', idx === i);
+    });
+  }
+
+  function nextQ() {
+    if (answers[current] === null) {
+      document.getElementById('q-card').style.border = '1px solid rgba(231,76,60,.6)';
+      setTimeout(() => document.getElementById('q-card').style.border = '1px solid var(--border)', 700);
+      return;
+    }
+    if (current < questions.length - 1) {
+      current++;
+      render();
+    } else {
+      showResult();
+    }
+  }
+
+  function prevQ() {
+    if (current > 0) { current--; render(); }
+  }
+
+  function showResult() {
+    // Tally score
+    let score = 0;
+    answers.forEach((ans, qi) => {
+      if (ans !== null) score += questions[qi].options[ans].points;
+    });
+    const maxScore = questions.length * 3;
+    const pct = Math.round((score / maxScore) * 100);
+
+    // Find level
+    const level = levels.find(l => score >= l.min && score <= l.max) || levels[levels.length - 1];
+
+    document.getElementById('q-card').style.display = 'none';
+    document.getElementById('progress-wrap').style.display = 'none';
+
+    const rc = document.getElementById('result-card');
+    rc.style.display = 'block';
+    document.getElementById('result-emoji').textContent = level.emoji;
+    document.getElementById('result-title').textContent = level.title;
+    document.getElementById('result-level-name').textContent = level.name;
+    document.getElementById('result-desc').textContent = level.desc;
+    document.getElementById('score-disp').textContent = score;
+    document.getElementById('score-ring').style.setProperty('--pct', pct + '%');
+
+    const grid = document.getElementById('runs-grid');
+    grid.innerHTML = '';
+    level.runs.forEach(r => {
+      grid.innerHTML += `<div class="run-card ${r.cls}"><span class="run-name">${r.name}</span><span class="run-info">${r.info}</span></div>`;
+    });
+  }
+
+  function restart() {
+    current = 0;
+    answers = new Array(questions.length).fill(null);
+    document.getElementById('result-card').style.display = 'none';
+    document.getElementById('q-card').style.display = 'block';
+    document.getElementById('progress-wrap').style.display = 'block';
+    render();
+  }
+
+  // ── Init ──────────────────────────────────────────────
+  render();
+</script>
+</body>
+</html>
