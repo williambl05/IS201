@@ -1,13 +1,7 @@
 /* ═══════════════════════════════════════════════════
    scratch.css  —  Verbier Skiing Page  (William Breum-Leer)
-   REQUIREMENT CHECKLIST:
-   ✔ At least 4 style definitions
-   ✔ Styles that specify font color
-   ✔ Styles that specify font family
-   ✔ At least 3 divs for positioning/styling
 ═══════════════════════════════════════════════════ */
 
-/* ── 1. Global Reset & Background ── */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -15,44 +9,49 @@
 }
 
 body {
-  font-family: 'Georgia', 'Times New Roman', serif;   /* font-family requirement */
+  font-family: 'Georgia', 'Times New Roman', serif;
   font-size: 17px;
   line-height: 1.8;
-  color: #1a1a2e;                                     /* font-color requirement */
-  background-color: #0f0f23;                          /* custom background color */
+  color: #1a1a2e;
+  background-color: #0f0f23;
   background-image:
     radial-gradient(ellipse at 20% 50%, rgba(30,60,110,.4) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 10%, rgba(100,160,220,.15) 0%, transparent 50%);
   min-height: 100vh;
 }
 
-/* ── 2. Header / Hero div ── (div 1) */
+/* ── Header / Hero div (div 1) ── */
 #header-div {
-  background: #1a3a5c;
+  background: linear-gradient(180deg, #071a3e 0%, #0d3276 60%, #1a5ca8 100%);
   text-align: center;
-  padding: 40px 20px;
+  padding: 80px 20px 100px;
   position: relative;
   overflow: hidden;
   border-bottom: 4px solid #c9a84c;
 }
 
 #header-div::before {
-  display: none;
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('https://images.unsplash.com/photo-1551524559-8af4e6624178?w=1400&q=70') center/cover no-repeat;
+  opacity: 0.22;
+  z-index: 0;
 }
 
 #header-div h1 {
-  font-family: 'Georgia', serif;             /* font-family requirement */
+  font-family: 'Georgia', serif;
   font-size: clamp(2.5rem, 7vw, 5rem);
-  color: #ffffff;                            /* font-color requirement */
+  color: #ffffff;
   letter-spacing: 0.05em;
   position: relative;
   z-index: 1;
-  text-shadow: 0 4px 20px rgba(0,0,0,.6);
+  text-shadow: none;
 }
 
 #header-div .tagline {
-  font-family: 'Trebuchet MS', sans-serif;  /* font-family requirement */
-  color: #c9a84c;                           /* font-color requirement */
+  font-family: 'Trebuchet MS', sans-serif;
+  color: #c9a84c;
   font-size: 1.2rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -61,20 +60,16 @@ body {
   margin-top: 12px;
 }
 
-/* ── 3. Navigation Bar ── */
+/* ── Navigation Bar (simplified) ── */
 #nav-bar {
   background: #071a3e;
-  border-bottom: 2px solid #c9a84c;
-  position: sticky;
-  top: 0;
-  z-index: 999;
   text-align: center;
   padding: 12px 0;
 }
 
 #nav-bar a {
-  font-family: 'Trebuchet MS', sans-serif;  /* font-family requirement */
-  color: #c9a84c;                           /* font-color requirement */
+  font-family: 'Trebuchet MS', sans-serif;
+  color: #c9a84c;
   text-decoration: none;
   margin: 0 20px;
   font-size: 0.95rem;
@@ -87,14 +82,14 @@ body {
   color: #ffffff;
 }
 
-/* ── 4. Main Content div ── (div 2) */
+/* ── Main Content div (div 2) ── */
 #content-div {
   max-width: 900px;
   margin: 60px auto;
   padding: 0 24px;
 }
 
-/* ── 5. Card sections ── */
+/* ── Card sections ── */
 .card-section {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(201,168,76,0.3);
@@ -105,8 +100,8 @@ body {
 }
 
 .card-section h2 {
-  font-family: 'Georgia', serif;            /* font-family requirement */
-  color: #c9a84c;                           /* font-color requirement */
+  font-family: 'Georgia', serif;
+  color: #c9a84c;
   font-size: 1.9rem;
   margin-bottom: 20px;
   padding-bottom: 10px;
@@ -114,11 +109,11 @@ body {
 }
 
 .card-section p {
-  color: #d0d8e8;                           /* font-color requirement */
+  color: #d0d8e8;
   margin-bottom: 16px;
 }
 
-/* ── 6. Lists ── */
+/* ── Lists ── */
 .card-section ol {
   color: #d0d8e8;
   padding-left: 1.5rem;
@@ -135,7 +130,7 @@ body {
   margin-bottom: 6px;
 }
 
-/* ── 7. Images ── */
+/* ── Images ── */
 .verbier-img {
   width: 100%;
   border-radius: 10px;
@@ -146,7 +141,7 @@ body {
   display: block;
 }
 
-/* ── 8. Video & Tableau wrapper div ── (div 3) */
+/* ── Video & Tableau wrapper div (div 3) ── */
 #media-div {
   background: rgba(7,26,62,0.7);
   border-radius: 12px;
@@ -179,7 +174,7 @@ body {
   height: 100%;
 }
 
-/* ── 9. Tableau wrapper ── */
+/* ── Tableau wrapper ── */
 .tableau-wrapper {
   border-radius: 10px;
   overflow: hidden;
@@ -187,12 +182,12 @@ body {
   min-height: 400px;
 }
 
-/* ── 10. Anchor section heading ── */
+/* ── Anchor section heading ── */
 .anchor-target {
   scroll-margin-top: 70px;
 }
 
-/* ── 11. Info boxes (runs, facts) ── */
+/* ── Info boxes ── */
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -225,7 +220,7 @@ body {
   display: block;
 }
 
-/* ── 12. App link button ── */
+/* ── App link buttons ── */
 .btn-snow {
   display: inline-block;
   background: #c9a84c;
@@ -258,7 +253,7 @@ body {
   border-color: #e2be72;
 }
 
-/* ── 13. Footer ── */
+/* ── Footer ── */
 footer {
   background: #050f1e;
   color: #445;
