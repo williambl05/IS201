@@ -28,21 +28,16 @@ body {
 
 /* ── 2. Header / Hero div ── (div 1) */
 #header-div {
-  background: linear-gradient(180deg, #071a3e 0%, #0d3276 60%, #1a5ca8 100%);
+  background: #1a3a5c;
   text-align: center;
-  padding: 80px 20px 100px;
+  padding: 40px 20px;
   position: relative;
   overflow: hidden;
   border-bottom: 4px solid #c9a84c;
 }
 
 #header-div::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url('https://images.unsplash.com/photo-1551524559-8af4e6624178?w=1400&q=70') center/cover no-repeat;
-  opacity: 0.22;
-  z-index: 0;
+  display: none;
 }
 
 #header-div h1 {
